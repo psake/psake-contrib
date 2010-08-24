@@ -15,16 +15,14 @@ Just right-click the zip and click on "properties" and click on the "unblock" bu
 
 **Step 3:** Extract the files in the zip
 
-**Step 4:** Use the scripts in your build 
+**Step 4:** Use the scripts and modules in your build 
 
-References:
 The following is an excellent technet article on how to ["dot source"](http://technet.microsoft.com/en-us/library/ee176949.aspx) a script
-Type "help about_modules" in PowerShell for help on how to import,load and use modules
+
+Type "help about_modules" in PowerShell for help on how to import, load and use modules
 
 ## How To Contribute, Collaborate, Communicate
 
 If you'd like to contribute to psake or psake-contrib, we have discussion groups over at google: **[psake-dev](http://groups.google.com/group/psake-dev)** **[psake-users](http://groups.google.com/group/psake-users)**
 
 Anyone can fork the main repository and submit patches, as well. And lastly, the [wiki](http://wiki.github.com/JamesKovacs/psake-contrib/) and [issues list](http://github.com/JamesKovacs/psake-contrib/issues) are also open for additions, edits, and discussion.
-
-
