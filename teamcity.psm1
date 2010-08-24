@@ -1,3 +1,12 @@
+if ($env:TEAMCITY_VERSION) {
+	# When PowerShell is started through TeamCity's Command Runner, the standard
+	# output will be wrapped at column 80 (a default). This has a negative impact
+	# on service messages, as TeamCity quite naturally fails parsing a wrapped
+	# message. The solution is to set a new, much wider output width. It will
+	# only be set if TEAMCITY_VERSION exists, i.e., if started by TeamCity.
+	$host.UI.RawUI.BufferSize = New-Object System.Management.Automation.Host.Size(8192,50)
+}
+
 function TeamCity-TestSuiteStarted([string]$name) {
 	Write-Output "##teamcity[testSuiteStarted name='$name']"
 }
@@ -43,6 +52,20 @@ function TeamCity-TestFailed([string]$name, [string]$message, [string]$details='
 	
 	$output += ']'
 	Write-Output $output
+}
+
+# See http://confluence.jetbrains.net/display/TCD5/Manually+Configuring+Reporting+Coverage
+function TeamCity-ConfigureDotNetCoverage([string]$key, [string]$value) {
+	Write-Output "##teamcity[dotNetCoverage $key='$value']"
+}
+
+function TeamCity-ImportDotNetCoverageResult([string]$tool, [string]$path) {
+	Write-Output "##teamcity[importData type='dotNetCoverage' tool='$tool' path='$path']"
+}
+
+# See http://confluence.jetbrains.net/display/TCD5/FxCop_#FxCop_-UsingServiceMessages
+function TeamCity-ImportFxCopResult([string]$path) {
+	Write-Output "##teamcity[importData type='FxCop' path='$path']"
 }
 
 function TeamCity-PublishArtifact([string]$path) {
