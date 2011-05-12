@@ -73,7 +73,7 @@ function TeamCity-PublishArtifact([string]$path) {
 }
 
 function TeamCity-ReportBuildStart([string]$message) {
-	Write-Output "##teamcity[progessStart '$message']"
+	Write-Output "##teamcity[progressStart '$message']"
 }
 
 function TeamCity-ReportBuildProgress([string]$message) {
