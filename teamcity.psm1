@@ -85,7 +85,7 @@ function TeamCity-ReportBuildFinish([string]$message) {
 }
 
 function TeamCity-ReportBuildStatus([string]$status, [string]$text='') {
-	Write-Output "##teamcity[buildStatus '$status' text='$text']"
+	Write-Output "##teamcity[buildStatus status='$status' text='$text']"
 }
 
 function TeamCity-SetBuildNumber([string]$buildNumber) {
