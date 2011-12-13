@@ -66,6 +66,14 @@ function TeamCity-ImportFxCopResult([string]$path) {
 	TeamCity-WriteServiceMessage 'importData' @{ type='FxCop'; path=$path }
 }
 
+function TeamCity-ImportNUnitReport([string]$path) {
+	TeamCity-WriteServiceMessage 'importData' @{ type='nunit'; path=$path }
+}
+
+function TeamCity-ImportJSLintReport([string]$path) {
+	TeamCity-WriteServiceMessage 'importData' @{ type='jslint'; path=$path }
+}
+
 function TeamCity-PublishArtifact([string]$path) {
 	TeamCity-WriteServiceMessage 'publishArtifacts' $path
 }
