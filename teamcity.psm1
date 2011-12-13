@@ -36,22 +36,20 @@ function TeamCity-TestError([string]$name, [string]$output) {
 }
 
 function TeamCity-TestFailed([string]$name, [string]$message, [string]$details='', [string]$type='', [string]$expected='', [string]$actual='') {
-	$output="##teamcity[testFailed ";
+	$messageAttributes = @{ name=$name; message=$message; details=$details }
+
 	if (![string]::IsNullOrEmpty($type)) {
-		$output += " type='$type'"
+		$messageAttributes.type = $type
 	}
-	
-	$output += " name='$name' message='$message' details='$details'"
 	
 	if (![string]::IsNullOrEmpty($expected)) {
-		$output += " expected='$expected'"
+		$messageAttributes.expected=$expected
 	}
 	if (![string]::IsNullOrEmpty($actual)) {
-		$output += " actual='$actual'"
+		$messageAttributes.actual=$actual
 	}
-	
-	$output += ']'
-	Write-Output $output
+
+	TeamCity-WriteServiceMessage 'testFailed' $messageAttributes
 }
 
 # See http://confluence.jetbrains.net/display/TCD5/Manually+Configuring+Reporting+Coverage
