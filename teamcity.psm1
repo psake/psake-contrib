@@ -8,92 +8,98 @@ if ($env:TEAMCITY_VERSION) {
 }
 
 function TeamCity-TestSuiteStarted([string]$name) {
-	Write-Output "##teamcity[testSuiteStarted name='$name']"
+	TeamCity-WriteServiceMessage 'testSuiteStarted' @{ name=$name }
 }
 
 function TeamCity-TestSuiteFinished([string]$name) {
-	Write-Output "##teamcity[testSuiteFinished name='$name']"
+	TeamCity-WriteServiceMessage 'testSuiteFinished' @{ name=$name }
 }
 
 function TeamCity-TestStarted([string]$name) {
-	Write-Output "##teamcity[testStarted name='$name']"
+	TeamCity-WriteServiceMessage 'testStarted' @{ name=$name }
 }
 
 function TeamCity-TestFinished([string]$name) {
-	Write-Output "##teamcity[testFinished name='$name']"
+	TeamCity-WriteServiceMessage 'testFinished' @{ name=$name }
 }
 
 function TeamCity-TestIgnored([string]$name, [string]$message='') {
-	Write-Output "##teamcity[testIgnored name='$name' message='$message']"
+	TeamCity-WriteServiceMessage 'testIgnored' @{ name=$name; message=$message }
 }
 
 function TeamCity-TestOutput([string]$name, [string]$output) {
-	Write-Output "##teamcity[testStdOut name='$name' out='$output']"
+	TeamCity-WriteServiceMessage 'testStdOut' @{ name=$name; out=$output }
 }
 
 function TeamCity-TestError([string]$name, [string]$output) {
-	Write-Output "##teamcity[testStdErr name='$name' out='$output']"
+	TeamCity-WriteServiceMessage 'testStdErr' @{ name=$name; out=$output }
 }
 
 function TeamCity-TestFailed([string]$name, [string]$message, [string]$details='', [string]$type='', [string]$expected='', [string]$actual='') {
-	$output="##teamcity[testFailed ";
+	$messageAttributes = @{ name=$name; message=$message; details=$details }
+
 	if (![string]::IsNullOrEmpty($type)) {
-		$output += " type='$type'"
+		$messageAttributes.type = $type
 	}
-	
-	$output += " name='$name' message='$message' details='$details'"
 	
 	if (![string]::IsNullOrEmpty($expected)) {
-		$output += " expected='$expected'"
+		$messageAttributes.expected=$expected
 	}
 	if (![string]::IsNullOrEmpty($actual)) {
-		$output += " actual='$actual'"
+		$messageAttributes.actual=$actual
 	}
-	
-	$output += ']'
-	Write-Output $output
+
+	TeamCity-WriteServiceMessage 'testFailed' $messageAttributes
 }
 
 # See http://confluence.jetbrains.net/display/TCD5/Manually+Configuring+Reporting+Coverage
 function TeamCity-ConfigureDotNetCoverage([string]$key, [string]$value) {
-	Write-Output "##teamcity[dotNetCoverage $key='$value']"
+    TeamCity-WriteServiceMessage 'dotNetCoverage' @{ $key=$value }
 }
 
 function TeamCity-ImportDotNetCoverageResult([string]$tool, [string]$path) {
-	Write-Output "##teamcity[importData type='dotNetCoverage' tool='$tool' path='$path']"
+	TeamCity-WriteServiceMessage 'importData' @{ type='dotNetCoverage'; tool=$tool; path=$path }
 }
 
 # See http://confluence.jetbrains.net/display/TCD5/FxCop_#FxCop_-UsingServiceMessages
 function TeamCity-ImportFxCopResult([string]$path) {
-	Write-Output "##teamcity[importData type='FxCop' path='$path']"
+	TeamCity-WriteServiceMessage 'importData' @{ type='FxCop'; path=$path }
+}
+
+function TeamCity-ImportNUnitReport([string]$path) {
+	TeamCity-WriteServiceMessage 'importData' @{ type='nunit'; path=$path }
+}
+
+function TeamCity-ImportJSLintReport([string]$path) {
+	TeamCity-WriteServiceMessage 'importData' @{ type='jslint'; path=$path }
 }
 
 function TeamCity-PublishArtifact([string]$path) {
-	Write-Output "##teamcity[publishArtifacts '$path']"
+	TeamCity-WriteServiceMessage 'publishArtifacts' $path
 }
 
 function TeamCity-ReportBuildStart([string]$message) {
-	Write-Output "##teamcity[progressStart '$message']"
+	TeamCity-WriteServiceMessage 'progressStart' $message
 }
 
 function TeamCity-ReportBuildProgress([string]$message) {
-	Write-Output "##teamcity[progessMessage '$message']"
+	TeamCity-WriteServiceMessage 'progessMessage' $message
 }
 
 function TeamCity-ReportBuildFinish([string]$message) {
-	Write-Output "##teamcity[progessFinish '$message']"
+	TeamCity-WriteServiceMessage 'progessFinish' $message
 }
 
 function TeamCity-ReportBuildStatus([string]$status, [string]$text='') {
-	Write-Output "##teamcity[buildStatus '$status' text='$text']"
+	TeamCity-WriteServiceMessage 'buildStatus' @{ status=$status; text=$text }
 }
 
 function TeamCity-SetBuildNumber([string]$buildNumber) {
-	Write-Output "##teamcity[buildNumber '$buildNumber']"
+	TeamCity-WriteServiceMessage 'buildNumber' $buildNumber
 }
 
 function TeamCity-SetBuildStatistic([string]$key, [string]$value) {
-	Write-Output "##teamcity[buildStatisticValue key='$key' value='$value']"
+	TeamCity-WriteServiceMessage 'buildStatisticValue' @{ key=$key; value=$value }
 }
 
 function TeamCity-CreateInfoDocument([string]$buildNumber='', [boolean]$status=$true, [string[]]$statusText=$null, [System.Collections.IDictionary]$statistics=$null) {
@@ -146,4 +152,33 @@ function TeamCity-WriteInfoDocument([xml]$doc) {
 	$path=(Join-Path $dir 'teamcity-info.xml')
 	
 	$doc.Save($path);
+}
+
+function TeamCity-WriteServiceMessage([string]$messageName, $messageAttributesHashOrSingleValue) {
+	function escape([string]$value) {
+		([char[]] $value | 
+				%{ switch ($_) 
+						{
+								"|" { "||" }
+								"'" { "|'" }
+								"`n" { "|n" }
+								"`r" { "|r" }
+								"[" { "|[" }
+								"]" { "|]" }
+								([char] 0x0085) { "|x" }
+								([char] 0x2028) { "|l" }
+								([char] 0x2029) { "|p" }
+								default { $_ }
+						}
+				} ) -join ''
+		}
+
+	if ($messageAttributesHashOrSingleValue -is [hashtable]) {
+		$messageAttributesString = ($messageAttributesHashOrSingleValue.GetEnumerator() | 
+			%{ "{0}='{1}'" -f $_.Key, (escape $_.Value) }) -join ' '
+	} else {
+		$messageAttributesString = ("'{0}'" -f (escape $messageAttributesHashOrSingleValue))
+	}
+
+	Write-Output "##teamcity[$messageName $messageAttributesString]"
 }
