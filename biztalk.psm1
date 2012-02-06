@@ -20,6 +20,7 @@ if ($env:BTSINSTALLPATH) {
 }
 
 function Add-Application([string]$appName, [string]$appDescription = "") {
+    $btsCatalog.Refresh()
     $app = $btsCatalog.AddNewApplication()
     $app.Name = $appName
     $app.Description = $appDescription
@@ -27,13 +28,22 @@ function Add-Application([string]$appName, [string]$appDescription = "") {
 }
 
 function Remove-Application([string]$appName) {
-    $app = $btsCatalog.Applications["$appName"]
-    $btsCatalog.RemoveApplication($app)
-    $btsCatalog.SaveChanges()
+    $btsCatalog.Refresh()
+    $app = $btsCatalog.Applications[$appName]
+    Write-Host "Blop"
+    if ($app)
+    {
+        Remove-ReceivePorts($app.ReceivePorts)
+        Remove-SendPorts($app.SendPorts)
+
+        $btsCatalog.RemoveApplication($app)
+        $btsCatalog.SaveChanges()
+    }
 }
 
 function Add-ApplicationReference([string]$sourceAppName, [string]$destinationAppName) {
-  $sourceApp = $btsCatalog.Applications["$sourceAppName"]
+  $btsCatalog.Refresh()
+  $sourceApp = $btsCatalog.Applications[$sourceAppName]
   $destinationApp = $btsCatalog.Applications[$destinationAppName]
 
   $destinationApp.AddReference($sourceApp)
@@ -65,4 +75,18 @@ function Start-HostInstance([string]$hostInstanceName) {
 
 function ExportMsi([string]$appName, [string]$msiPath) {
     btstask.exe ExportApp -ApplicationName:"$appName" -Package:(Join-Path $msiPath "$appName.msi")
+}
+
+function Remove-ReceivePorts([string[]]$receivePorts) {
+    foreach ($port in $receivePorts) {
+        $btsCatalog.RemoveReceivePort($port)
+    }
+    $btsCatalog.SaveChanges()
+}
+
+function Remove-SendPort([string[]]$sendPort) {
+    foreach ($port in $sendPort) {
+        $btsCatalog.RemoveSendPort($port)
+    }
+    $btsCatalog.SaveChanges()
 }
