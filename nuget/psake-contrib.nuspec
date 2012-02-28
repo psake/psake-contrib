@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>psake-contrib</id>
+    <version>1.0.0</version>
+    <authors>James Kovacs,James Crowley,Rafal Klys,Artur Dorochowicz,Scott Banwart,Ales Roubicek,C-J Berg,Pepa Stefan</authors>
+    <projectUrl>https://github.com/psake/psake-contrib</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>psake-contrib is a repository for scripts, modules and functions that are useful for running a build with psake.</description>
+    <summary>Contrib project for psake extensions</summary>
+    <language>en-US</language>
+    <tags>psake build powershell</tags>
+  </metadata>
+  <files>
+    <file src="..\*.psm1" target="tools\" />
+  </files>
+</package>
