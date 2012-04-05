@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 if ($env:BTSINSTALLPATH) {
   Add-Type -Path "$env:BTSINSTALLPATH\Developer Tools\Microsoft.BizTalk.ExplorerOM.dll"
   $btsCatalog = New-Object Microsoft.BizTalk.ExplorerOM.BTSCatalogExplorer
