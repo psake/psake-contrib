@@ -19,8 +19,14 @@ function TeamCity-TestStarted([string]$name) {
 	TeamCity-WriteServiceMessage 'testStarted' @{ name=$name }
 }
 
-function TeamCity-TestFinished([string]$name) {
-	TeamCity-WriteServiceMessage 'testFinished' @{ name=$name }
+function TeamCity-TestFinished([string]$name, [int]$duration) {
+	$messageAttributes = @{name=$name; duration=$duration}
+	
+	if ($duration -gt 0) {
+		$messageAttributes.duration=$duration
+	}
+
+	TeamCity-WriteServiceMessage 'testFinished' $messageAttributes
 }
 
 function TeamCity-TestIgnored([string]$name, [string]$message='') {
