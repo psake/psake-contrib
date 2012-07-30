@@ -65,10 +65,13 @@ function Start-Application([string]$appName)
 {
     $btsCatalog.Refresh()
     $app = $btsCatalog.Applications[$appName]
-
+    
     if ($app)
     {
-        $app.Start([Microsoft.BizTalk.ExplorerOM.ApplicationStartOption]::StartAll)
+        $options = 0
+        $options = [Microsoft.BizTalk.ExplorerOM.ApplicationStartOption]::StartAll -band -bnot [Microsoft.BizTalk.ExplorerOM.ApplicationStartOption]::StartReferencedApplications
+        $app.Start($options)
+        $btsCatalog.SaveChanges()
     }
 }
 
@@ -76,10 +79,11 @@ function Stop-Application([string]$appName)
 {
     $btsCatalog.Refresh()
     $app = $btsCatalog.Applications[$appName]
-
+    
     if ($app)
     {
         $app.Stop([Microsoft.BizTalk.ExplorerOM.ApplicationStopOption]::StopAll)
+        $btsCatalog.SaveChanges()
     }
 }
 
