@@ -16,8 +16,13 @@
 if ($env:BTSINSTALLPATH) {
     Add-Type -Path "$env:BTSINSTALLPATH\Developer Tools\Microsoft.BizTalk.ExplorerOM.dll"
     Add-Type -Path "$env:BTSINSTALLPATH\Microsoft.BizTalk.ApplicationDeployment.Engine.dll"
+    
+    $btsGroup = Get-WmiObject MSBTS_GroupSetting -Namespace 'root\MicrosoftBizTalkServer'
+    
+    $btsConnectionString = [string]::Format("Data Source={0};Initial Catalog={1};Integrated Security=SSPI", $btsGroup.MgmtDbServerName, $btsGroup.MgmtDbName)
+
     $btsCatalog = New-Object Microsoft.BizTalk.ExplorerOM.BTSCatalogExplorer
-    $btsCatalog.ConnectionString = "Data Source=localhost;Initial Catalog=BizTalkMgmtDb;Integrated Security=SSPI"
+    $btsCatalog.ConnectionString = $btsConnectionString
 }
 
 function Add-Application([string]$appName, [string]$appDescription = "") {
@@ -139,15 +144,17 @@ function Reset-Pipelines($app) {
 #}
 
 function Remove-Resources($app) {
+    $connectionParms = $btsCatalog.ConnectionString.Split(";")
+    $btsDb = $connectionParms[0].Split("=")[1]
+
     $group = New-Object Microsoft.BizTalk.ApplicationDeployment.Group
     $group.DBName = "BizTalkMgmtDb"
-    $group.DBServer = "localhost"
+    $group.DBServer = $btsDb
 
     $deployApp = $group.Applications[$app.Name]
     $deployApp.RemoveResources($deployApp.ResourceCollection)
-    
+
     $btsCatalog.Refresh()
-    
     $group.Commit()
 }
 
