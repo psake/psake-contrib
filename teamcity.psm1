@@ -7,6 +7,11 @@ if ($env:TEAMCITY_VERSION) {
 	$host.UI.RawUI.BufferSize = New-Object System.Management.Automation.Host.Size(8192,50)
 }
 
+function TeamCity-Block([string]$name, [scriptblock]$sb) {
+    TeamCity-BlockOpened $name
+    Invoke-Command -ScriptBlock $sb
+    TeamCity-BlockClosed $name
+}
 function TeamCity-BlockOpened([string]$name) {
 	TeamCity-WriteServiceMessage 'blockOpened' @{ name=$name }
 }
