@@ -72,6 +72,14 @@ function TeamCity-ImportFxCopResult([string]$path) {
 	TeamCity-WriteServiceMessage 'importData' @{ type='FxCop'; path=$path }
 }
 
+function TeamCity-ImportDuplicatesResult([string]$path) {
+	TeamCity-WriteServiceMessage 'importData' @{ type='DotNetDupFinder'; path=$path }
+}
+
+function TeamCity-ImportInspectionCodeResult([string]$path) {
+	TeamCity-WriteServiceMessage 'importData' @{ type='ReSharperInspectCode'; path=$path }
+}
+
 function TeamCity-ImportNUnitReport([string]$path) {
 	TeamCity-WriteServiceMessage 'importData' @{ type='nunit'; path=$path }
 }
