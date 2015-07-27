@@ -2,9 +2,14 @@ if ($env:TEAMCITY_VERSION) {
 	# When PowerShell is started through TeamCity's Command Runner, the standard
 	# output will be wrapped at column 80 (a default). This has a negative impact
 	# on service messages, as TeamCity quite naturally fails parsing a wrapped
-	# message. The solution is to set a new, much wider output width. It will
+	# message. The solution is to set a new, wider output width. It will
 	# only be set if TEAMCITY_VERSION exists, i.e., if started by TeamCity.
-	$host.UI.RawUI.BufferSize = New-Object System.Management.Automation.Host.Size(8192,50)
+	try {
+      $rawUI = (Get-Host).UI.RawUI
+      $m = $rawUI.MaxPhysicalWindowSize.Width
+      $rawUI.BufferSize = New-Object Management.Automation.Host.Size ([Math]::max($m, 500), $rawUI.BufferSize.Height)
+      $rawUI.WindowSize = New-Object Management.Automation.Host.Size ($m, $rawUI.WindowSize.Height)
+    } catch {}
 }
 
 function TeamCity-TestSuiteStarted([string]$name) {
