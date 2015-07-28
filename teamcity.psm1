@@ -9,7 +9,10 @@ if ($env:TEAMCITY_VERSION) {
       $m = $rawUI.MaxPhysicalWindowSize.Width
       $rawUI.BufferSize = New-Object Management.Automation.Host.Size ([Math]::max($m, 500), $rawUI.BufferSize.Height)
       $rawUI.WindowSize = New-Object Management.Automation.Host.Size ($m, $rawUI.WindowSize.Height)
-    } catch {}
+    } catch {
+		$ErrorMessage = $_.Exception.Message
+		Write-Host "WARNING: Failed setting buffer size - $ErrorMessage"
+	}
 }
 
 function TeamCity-TestSuiteStarted([string]$name) {
