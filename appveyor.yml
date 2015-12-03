@@ -1,0 +1,17 @@
+# psake-contrib
+
+version: 1.0.0-build-{build}
+
+branches:
+  except:
+    - gh-pages
+
+os: Visual Studio 2015
+
+install:
+  - cinst pester
+  
+build: false
+
+test_script:
+  - ps: . .\Run-Tests.ps1
