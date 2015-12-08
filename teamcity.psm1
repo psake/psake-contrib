@@ -104,16 +104,34 @@ function TeamCity-ReportBuildFinish([string]$message) {
 	TeamCity-WriteServiceMessage 'progressFinish' $message
 }
 
-function TeamCity-ReportBuildStatus([string]$status, [string]$text='') {
-	TeamCity-WriteServiceMessage 'buildStatus' @{ status=$status; text=$text }
+function TeamCity-ReportBuildStatus([string]$status=$null, [string]$text='') {
+	$messageAttributes = @{ text=$text }
+
+	if (![string]::IsNullOrEmpty($status)) {
+		$messageAttributes.status=$status
+	}
+
+	TeamCity-WriteServiceMessage 'buildStatus' $messageAttributes
 }
 
 function TeamCity-SetBuildNumber([string]$buildNumber) {
 	TeamCity-WriteServiceMessage 'buildNumber' $buildNumber
 }
 
+function TeamCity-SetParameter([string]$name, [string]$value) {
+	TeamCity-WriteServiceMessage 'setParameter' @{ name=$name; value=$value }
+}
+
 function TeamCity-SetBuildStatistic([string]$key, [string]$value) {
 	TeamCity-WriteServiceMessage 'buildStatisticValue' @{ key=$key; value=$value }
+}
+
+function TeamCity-EnableServiceMessages() {
+	TeamCity-WriteServiceMessage 'enableServiceMessages'
+}
+
+function TeamCity-DisableServiceMessages() {
+	TeamCity-WriteServiceMessage 'disableServiceMessages'
 }
 
 function TeamCity-CreateInfoDocument([string]$buildNumber='', [boolean]$status=$true, [string[]]$statusText=$null, [System.Collections.IDictionary]$statistics=$null) {
@@ -190,9 +208,10 @@ function TeamCity-WriteServiceMessage([string]$messageName, $messageAttributesHa
 	if ($messageAttributesHashOrSingleValue -is [hashtable]) {
 		$messageAttributesString = ($messageAttributesHashOrSingleValue.GetEnumerator() | 
 			%{ "{0}='{1}'" -f $_.Key, (escape $_.Value) }) -join ' '
-	} else {
-		$messageAttributesString = ("'{0}'" -f (escape $messageAttributesHashOrSingleValue))
+      $messageAttributesString = " $messageAttributesString"
+	} elseif ($messageAttributesHashOrSingleValue) {
+		$messageAttributesString = (" '{0}'" -f (escape $messageAttributesHashOrSingleValue))
 	}
 
-	Write-Output "##teamcity[$messageName $messageAttributesString]"
+	Write-Output "##teamcity[$messageName$messageAttributesString]"
 }
