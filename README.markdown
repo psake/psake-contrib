@@ -1,6 +1,8 @@
 ﻿Welcome to the psake-contrib project.
 =====================================
 
+[![Join the chat at https://gitter.im/psake/psake-contrib](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/psake/psake-contrib?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 psake-contrib is a repository for scripts, modules and functions that are useful for running a build with [psake](http://github.com/JamesKovacs/psake).
 
 
