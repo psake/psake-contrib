@@ -1,5 +1,41 @@
 Import-Module ".\teamcity.psm1" -DisableNameChecking -Force
 
+Describe "TeamCity-Message" {
+    It "Writes ##teamcity[message text='Build log message.' status='NORMAL']" {
+        TeamCity-Message "Build log message." | `
+          Should BeExactly "##teamcity[message text='Build log message.' status='NORMAL']"
+    }
+    
+    It "Writes ##teamcity[message text='Exception text' status='ERROR']" {
+        TeamCity-Message "Exception text" "ERROR" | `
+          Should BeExactly "##teamcity[message text='Exception text' status='ERROR']"
+    }
+    
+    It "Writes ##teamcity[message text='Exception text' errorDetails='stack trace' status='ERROR']" {
+        TeamCity-Message "Exception text" "ERROR" "stack trace" | `
+          Should BeExactly "##teamcity[message errorDetails='stack trace' status='ERROR' text='Exception text']"
+    }
+}
+
+Describe "TeamCity-BlockOpened" {
+    It "Writes ##teamcity[blockOpened name='MyServiceBlock']" {
+        TeamCity-BlockOpened "MyServiceBlock" | `
+          Should BeExactly "##teamcity[blockOpened name='MyServiceBlock']"
+    }
+    
+    It "Writes ##teamcity[blockOpened name='MyServiceBlock' description='Service block description.']" {
+        TeamCity-BlockOpened "MyServiceBlock" "Service block description." | `
+          Should BeExactly "##teamcity[blockOpened name='MyServiceBlock' description='Service block description.']"
+    }
+}
+
+Describe "TeamCity-BlockClosed" {
+    It "Writes ##teamcity[blockClosed name='MyServiceBlock']" {
+        TeamCity-BlockClosed "MyServiceBlock" | `
+          Should BeExactly "##teamcity[blockClosed name='MyServiceBlock']"
+    }
+}
+
 Describe "TeamCity-WriteServiceMessage" {
     It "Writes ##teamcity[message 'Single parameter message.']" {
         TeamCity-WriteServiceMessage "message" "Single parameter message." | `
