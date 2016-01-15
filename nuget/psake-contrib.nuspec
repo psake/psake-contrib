@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>psake-contrib</id>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <authors>James Kovacs,James Crowley,Rafal Klys,Artur Dorochowicz,Scott Banwart,Ales Roubicek,C-J Berg,Pepa Stefan</authors>
     <projectUrl>https://github.com/psake/psake-contrib</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
