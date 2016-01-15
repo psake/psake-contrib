@@ -7,6 +7,30 @@ if ($env:TEAMCITY_VERSION) {
 	$host.UI.RawUI.BufferSize = New-Object System.Management.Automation.Host.Size(8192,50)
 }
 
+function TeamCity-Message([string]$text, [string]$status = 'NORMAL', [string]$errorDetails) {
+  $messageAttributes = @{ text=$text; status=$status }
+  
+  if ($errorDetails) {
+    $messageAttributes.errorDetails = $errorDetails
+  }
+  
+	TeamCity-WriteServiceMessage 'message' $messageAttributes
+}
+
+function TeamCity-BlockOpened([string]$name, [string]$description) {
+  $messageAttributes = @{ name=$name }
+  
+  if ($description) {
+    $messageAttributes.description = $description
+  }
+  
+	TeamCity-WriteServiceMessage 'blockOpened' $messageAttributes
+}
+
+function TeamCity-BlockClosed([string]$name) {
+	TeamCity-WriteServiceMessage 'blockClosed' @{ name=$name }
+}
+
 function TeamCity-TestSuiteStarted([string]$name) {
 	TeamCity-WriteServiceMessage 'testSuiteStarted' @{ name=$name }
 }
