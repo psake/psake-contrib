@@ -138,6 +138,16 @@ function TeamCity-ReportBuildStatus([string]$status=$null, [string]$text='') {
 	TeamCity-WriteServiceMessage 'buildStatus' $messageAttributes
 }
 
+function TeamCity-ReportBuildProblem([string]$description, [string]$identity=$null) {
+	$messageAttributes = @{ description=$description }
+
+	if (![string]::IsNullOrEmpty($identity)) {
+		$messageAttributes.identity=$identity
+	}
+
+	TeamCity-WriteServiceMessage 'buildProblem' $messageAttributes
+}
+
 function TeamCity-SetBuildNumber([string]$buildNumber) {
 	TeamCity-WriteServiceMessage 'buildNumber' $buildNumber
 }
