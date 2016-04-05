@@ -218,6 +218,18 @@ Describe "TeamCity-ReportBuildStatus" {
     }
 }
 
+Describe "TeamCity-ReportBuildProblem" {
+    It "Writes ##teamcity[buildProblem description='A problem occured.' identity='SOME_IDENTITY']" {
+        TeamCity-ReportBuildProblem "A problem occured." "SOME_IDENTITY" | `
+          Should BeExactly "##teamcity[buildProblem description='A problem occured.' identity='SOME_IDENTITY']"
+    }
+    
+    It "Writes ##teamcity[buildStatus text='A problem occured.'] without optional identity attribute." {
+        TeamCity-ReportBuildStatus -text "A problem occured." | `
+          Should BeExactly "##teamcity[buildStatus text='A problem occured.']"
+    }
+}
+
 Describe "TeamCity-SetBuildNumber" {
     It "Writes ##teamcity[buildNumber '1.2.3_{build.number}-ent']" {
         TeamCity-SetBuildNumber "1.2.3_{build.number}-ent" | `
