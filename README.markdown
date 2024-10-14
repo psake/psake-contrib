@@ -1,9 +1,7 @@
 ﻿Welcome to the psake-contrib project.
 =====================================
 
-[![Join the chat at https://gitter.im/psake/psake-contrib](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/psake/psake-contrib?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-psake-contrib is a repository for scripts, modules and functions that are useful for running a build with [psake](http://github.com/JamesKovacs/psake).
+psake-contrib is a repository for scripts, modules and functions that are useful for running a build with [psake](http://github.com/psake/psake).
 
 
 ## How to get started:
@@ -25,6 +23,6 @@ Type "help about_modules" in PowerShell for help on how to import, load and use 
 
 ## How To Contribute, Collaborate, Communicate
 
-If you'd like to contribute to psake or psake-contrib, we have discussion groups over at google: **[psake-dev](http://groups.google.com/group/psake-dev)** **[psake-users](http://groups.google.com/group/psake-users)**
+If you'd like to get involved with psake, we have [GitHub Discussions](https://github.com/orgs/psake/discussions), the #psake channel on the [PowerShell Discord](https://aka.ms/psdiscord), and the #psake channel on [PowerShell Slack](https://aka.ms/psslack).
 
-Anyone can fork the main repository and submit patches, as well. And lastly, the [wiki](http://wiki.github.com/JamesKovacs/psake-contrib/) and [issues list](http://github.com/JamesKovacs/psake-contrib/issues) are also open for additions, edits, and discussion.
+Anyone can fork the main repository and submit patches, as well. And lastly, the [psake docs](http://github.com/psake/docs) and [issues list](http://github.com/psake/psake-contrib/issues) are also open for additions, edits, and discussion.
